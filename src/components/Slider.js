@@ -3,12 +3,6 @@ import { Button, Carousel } from 'react-bootstrap';
 import "../App.css";
 import { ToggleButton, ToggleButtonGroup, Form, Image, ButtonGroup } from 'react-bootstrap';
 
-// import Icon from '@material-ui/core/Icon';
-
-// import MailIcon from "@material-ui/icons/Mail";
-// import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
-// import MapIcon from "@material-ui/icons/Map";
-
 import {
   CircleMenu,
   CircleMenuItem,
@@ -30,15 +24,22 @@ function Slider() {
 
 
   //var connectionName = "ws://localhost:9090";
-  // var connectionName ="ws://141.44.50.126:9090";
-  var connectionName ="ws://141.44.228.65:9090";
+  var connectionName ="ws://141.44.50.126:9090";
+  // var connectionName ="ws://141.44.228.65:9090";
   var [connection, setConnection] = useState(false);
+
+  var ros = useMemo(() => {
+    return new window.ROSLIB.Ros({
+      url: ''
+    })
+  }, []);
 
   useEffect(() => {
     if (!connection) {
       handleConnect();
     }
   }, [connection])
+
 
   const handleConnect = () => {
     try {
@@ -59,7 +60,6 @@ function Slider() {
 
         setTimeout(() => {
           try {
-            // ros.connect(`ws://141.44.50.126:9090`);
             ros.connect(connectionName);
 
           }
@@ -101,51 +101,21 @@ function Slider() {
     setIndex(selectedIndex2);
   };
 
-  function page1() {
+  function page(pageNumber) {
+    var temp = pageNumber;
     clearGUI();
-    setIndex2(0);
-    refCarousel2.current.style.display = 'flex';
-    refMain.current.className = 'AppLarge';
-  }
-  function page2() {
-    clearGUI();
-    setIndex2(1);
-    refCarousel2.current.style.display = "flex";
-    refMain.current.className = 'AppLarge';
-  }
-  function page3() {
-    clearGUI();
-    setIndex2(2);
+    setIndex(pageNumber);
     refCarousel2.current.style.display = 'flex';
     refMain.current.className = 'AppLarge';
   }
 
-  function back1() {
+  function back(pageNumber) {
+    var temp = pageNumber;
     clearGUI();
-    setIndex(0);
+    setIndex(pageNumber);
     refCarousel.current.style.display = 'flex';
     refMain.current.className = 'AppSmall';
   }
-  function back2() {
-    clearGUI();
-    setIndex(1);
-    refCarousel.current.style.display = 'flex';
-    refMain.current.className = 'AppSmall';
-  }
-  function back3() {
-    clearGUI();
-    setIndex(2);
-    refCarousel.current.style.display = 'flex';
-    refMain.current.className = 'AppSmall';
-  }
-
-  var ros = useMemo(() => {
-    return new window.ROSLIB.Ros({
-      url: ''
-    })
-  }, []);
-
-
 
   useEffect(() => {
     startGUI();
@@ -154,7 +124,6 @@ function Slider() {
   function clearGUI() {
     refCarousel.current.style.display = 'none';
     refCarousel2.current.style.display = 'none';
-
   }
 
   function startGUI() {
@@ -166,18 +135,22 @@ function Slider() {
     console.log("bye");
   }
   const [selectedColor, setSelectedColor] = useState("");
+  const [updatedColor, setUpdatedColor] = useState("");
 
   const handleColorChange = (event) => {
-    setSelectedColor(event.target.value);
-  };
+    const color = event.target.value;
+    setUpdatedColor(color);
+    setSelectedColor(color);
 
+    publishMessage(`eye_color,${color}`);
+  };
 
   return (<div id="main" ref={refMain} className='AppSmall'>
 
     {/* Start Page start */}
     <div id="carousel" className='carousel' ref={refCarousel} >
       <Carousel activeIndex={index} onSelect={handleSelect} interval={null} >
-        <Carousel.Item onClick={page1} >
+        <Carousel.Item onClick={() => page(0)} >
           <img
             // className="d-block w-100"
             src="/image1.png"
@@ -187,26 +160,25 @@ function Slider() {
             <h3>Common Task</h3>
           </Carousel.Caption>
         </Carousel.Item>
-        <Carousel.Item onClick={page2}>
+        <Carousel.Item onClick={() => page(1)}>
           <img
             //className="d-block w-100"
-            src="/image2.png"
+            src="/image3.png"
             alt="Second slide"
           />
 
           <Carousel.Caption>
-            <h3>Specific Task</h3>
+            <h3>Personalisation </h3>
           </Carousel.Caption>
         </Carousel.Item>
-        <Carousel.Item onClick={page3}>
+        <Carousel.Item onClick={() => page(2)}>
           <img
             //className="d-block w-100"
-            src="/image3.png"
+            src="/image2.png"
             alt="Third slide"
           />
-
           <Carousel.Caption>
-            <h3>Personalisation</h3>
+            <h3>Specific Task</h3>
           </Carousel.Caption>
         </Carousel.Item>
       </Carousel>
@@ -217,41 +189,33 @@ function Slider() {
 
     {/* Main Page start */}
     <div id="carousel2" className='carousel' ref={refCarousel2} >
-      <Carousel activeIndex={index2} onSelect={handleSelect2} interval={null} >
+      <div className="tabbar">
+        <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(0)}>Common Task</Button>
+        <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(1)}>Personalisation</Button>
+        <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(2)}>Specific Task</Button>
+      </div>
+      <Carousel  activeIndex={index2} onSelect={handleSelect2} interval={null} >
         <Carousel.Item >
-
-          <div className='page'>
-            <img
-              src="/image1bg.png"
-              alt="Third slide"
-            />
+          <div className='page1'>
             <div >
-              <Button className="backbutton" variant="outline-light" size="lg" onClick={back1} >Back</Button>
+              <Button className="backbutton" variant="outline-light" size="lg" onClick={() => back(0)} >Back</Button>
             </div>
 
-            <div className='boi'>
+            <div className='CircularMenu'>
               <CircleMenu startAngle={-90} rotationAngle={360} itemSize={5} radius={8} className={""} onMenuToggle={blabla}
                 rotationAngleInclusive={false}>
 
-                <CircleMenuItem onClick={() => publishMessage("look,up")} tooltip="Up" tooltipPlacement={TooltipPlacement.Right}>
-                  {/* <MailIcon /> */}
-                  {/* <Icon className="fa fa-plus-circle" /> */}
-
+                <CircleMenuItem onClick={() => publishMessage("look,up")} tooltip="Up" className='boiexp' tooltipPlacement={TooltipPlacement.Right}>
                   <img className="icon" src="/up.png" alt="First slide"
                   />
                 </CircleMenuItem>
                 <CircleMenuItem onClick={() => publishMessage("look,right")} tooltip="Right">
-                  {/* <HelpOutlineIcon /> */}
-
                   <img className="icon" src="/right.png" alt="First slide" />
-
                 </CircleMenuItem>
                 <CircleMenuItem onClick={() => publishMessage("look,down")} tooltip="Down">
                   <img className="icon" src="/down.png" alt="First slide" />
-                  {/* <MapIcon /> */}
                 </CircleMenuItem>
                 <CircleMenuItem onClick={() => publishMessage("look,left")} tooltip="Left">
-                  {/* <InfoIcon /> */}
                   <img className="icon" src="/left.png" alt="First slide" />
                 </CircleMenuItem>
               </CircleMenu>
@@ -259,94 +223,90 @@ function Slider() {
             <Carousel.Caption>
               <h3>Common Task</h3>
             </Carousel.Caption>
-            <h1 className="PlayMotion">Play Motion</h1>
-            <h1 className="Look">Look</h1>
-            <div className="backbutton2">
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("motion,show_left")} >Show Left</Button>
+            <h1 className="RightTitle">Play Motion</h1>
+            <h1 className="LeftTitle">Look</h1>
+            <div className="RightElement">
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,show_left")} >Show Left</Button>
               <br></br>
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("motion,nod")} >Nod</Button>
               <br></br>
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("motion,bow")}>Bow</Button>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,nod")} >Nod</Button>
               <br></br>
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("motion,dance")} >Dance</Button>
+              <br></br>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,bow")}>Bow</Button>
+              <br></br>
+              <br></br>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,dance")} >Dance</Button>
             </div>
           </div>
 
         </Carousel.Item>
         <Carousel.Item >
-          <div className='page'  >
-            <img
-              src="/image2bg.png"
-              alt="Third slide"
-
-            />
+          <div className='page2'  >
             <div >
-              <Button className="backbutton" variant="outline-light" size="lg" onClick={back2} >Back</Button>
+              <Button className="backbutton" variant="outline-light" size="lg" onClick={() => back(1)}  >Back</Button>
             </div>
-            <div className='togglebutton'>
-              <div>
-                <div className='but1'>
-                <label >
-                  <div style={{ width: "100px", height: "100px", backgroundColor: "red" , borderRadius:"10%"}}></div>
-                  <input type="radio" name="color" value="red" checked={selectedColor === "red"} onChange={handleColorChange} />
+            <div>
+              <div className=''>
 
-                </label>
-                <br />
-                <label >
-                  <div style={{ width: "100px", height: "100px", backgroundColor: "black" , borderRadius:"10%"}}></div>
-                  <input type="radio" name="color" value="black" checked={selectedColor === "black"} onChange={handleColorChange} />
+                <div className='ToggleGroup1' >
+                  <label className='Togglecolor'>
+                    <div style={{ width: "100px", height: "100px", backgroundColor: "red", borderRadius: "10%" }}></div>
+                    <input type="radio" name="color" value="red" checked={selectedColor === "red"} onChange={handleColorChange} />
 
-                </label>
+                  </label>
+                  <label >
+                    <div style={{ width: "100px", height: "100px", backgroundColor: "black", borderRadius: "10%" }}></div>
+                    <input type="radio" name="color" value="black" checked={selectedColor === "black"} onChange={handleColorChange} />
+
+                  </label>
                 </div>
-                <div className='but2'>
-                {/* <br /> */}
-                <label >
-                  <div style={{ width: "100px", height: "100px", backgroundColor: "blue" , borderRadius:"10%"}}></div>
-                  <input type="radio" name="color" value="blue" checked={selectedColor === "blue"} onChange={handleColorChange} />
 
-                </label>
-                <br />
-                <label >
-                  <div style={{ width: "100px", height: "100px", backgroundColor: "green", borderRadius:"10%"}}></div>
-                  <input type="radio" name="color" value="green" checked={selectedColor === "green"} onChange={handleColorChange} />
+                <div className='ToggleGroup2' >
 
-                </label>
+                  <label className='Togglecolor'>
+                    <div style={{ width: "100px", height: "100px", backgroundColor: "blue", borderRadius: "10%" }}></div>
+                    <input type="radio" name="color" value="blue" checked={selectedColor === "blue"} onChange={handleColorChange} />
+
+                  </label>
+                  <label >
+                    <div style={{ width: "100px", height: "100px", backgroundColor: "green", borderRadius: "10%" }}></div>
+                    <input type="radio" name="color" value="green" checked={selectedColor === "green"} onChange={handleColorChange} />
+
+                  </label>
                 </div>
-                {/* <br /> */}
+
+
               </div>
             </div>
-            <h1 className="Look">Eye Color</h1>
-            <Button onClick={() => publishMessage(`eye_color,${selectedColor}`)} className="setButton">Set</Button>
-            <h1 className="PlayMotion">Set Voice</h1>
-            <div className="backbutton2">
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("voice")} >Voice 1</Button>
+            <h1 className="LeftTitle">Eye Color</h1>
+            <h1 className="RightTitle">Set Voice</h1>
+            <div className="RightElement">
+              <Button variant="light" size="lg" onClick={() => publishMessage("voice")} >Voice 1</Button>
               <br></br>
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("voice")} >Voice 2</Button>
               <br></br>
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("voice")}>Voice 3</Button>
+              <Button variant="light" size="lg" onClick={() => publishMessage("voice")} >Voice 2</Button>
               <br></br>
-              <Button variant="outline-dark" size="lg" onClick={() => publishMessage("voice")} >Voice 4</Button>
-            </div>
-          </div>
-
-          <Carousel.Caption>
-            <h3>Specific Task</h3>
-          </Carousel.Caption>
-        </Carousel.Item>
-        <Carousel.Item >
-          <div className='page'  >
-            <img
-              src="/image3bg.png"
-              alt="Third slide"
-              className='page'
-            />
-            <div >
-              <Button className="backbutton" variant="outline-light" size="lg" onClick={back3} >Back</Button>
+              <br></br>
+              <Button variant="light" size="lg" onClick={() => publishMessage("voice")}>Voice 3</Button>
+              <br></br>
+              <br></br>
+              <Button variant="light" size="lg" onClick={() => publishMessage("voice")} >Voice 4</Button>
             </div>
           </div>
 
           <Carousel.Caption>
             <h3>Personalisation</h3>
+          </Carousel.Caption>
+        </Carousel.Item>
+        <Carousel.Item >
+          <div className='page3'  >
+            <div >
+              <Button className="backbutton" variant="outline-light" size="lg" onClick={() => back(2)}  >Back</Button>
+            </div>
+          </div>
+
+          <Carousel.Caption>
+            <h3>Specific Task</h3>
           </Carousel.Caption>
         </Carousel.Item>
       </Carousel>
