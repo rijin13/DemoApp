@@ -207,3 +207,10 @@ h1 {
 .carousel-control-next,.carousel-control-prev{
   width: 3% !important;
 }
+
+.toggle-switch-container {
+  z-index: 99;
+  position: absolute;
+  right: 6vh;
+  bottom: 6vw;
+}

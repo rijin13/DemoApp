@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Button, Carousel } from 'react-bootstrap';
 import "../App.css";
 import { ToggleButton, ToggleButtonGroup, Form, Image, ButtonGroup } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 
 import {
   CircleMenu,
@@ -10,7 +11,58 @@ import {
 } from "react-circular-menu";
 import { borderRadius } from '@mui/system';
 
-function Slider() {
+function Ari() {
+
+  const [language, setLanguage] = useState('german');
+
+  const texts = {
+    english: {
+      commonTask: "Common Task",
+      personalisation: "Personalisation",
+      specificTask: "Specific Tasks",
+      look: "Look",
+      playMotion: "Play Motion",
+      height: "Height",
+      voice_male: "Voice (male): ",
+      voice_famle: "Voice (female): ",
+      eye_color: "Eye Color",
+
+      showLeft: "Show Left",
+      nod:"Nod",
+      dance:"Dance",
+      bow:"Bow",
+      moveTheCube: "MOVE THE CUBE",
+      pressSource: "Press Source Positon",
+      pressDestination: "Press Destination Position",
+      clearAll:"Clear All",
+      connected: "Connected",
+      disconnected:"Disconnected",
+      pleaseWait:"Please Wait Robot is Moving"
+    },
+    german: {
+      commonTask: "Funktionen",
+      personalisation: "Personalisierung",
+      specificTask: "Würfel",
+      look: "Sehen",
+      playMotion: "Bewegung",
+      height: "Höhe",
+      voice_male: "Stimme (männlich) :",
+      voice_famle: "Stimme (weiblich) :",
+      eye_color: "Augen Farbe",
+
+      showLeft: "Links",
+      nod:"Nicken",
+      dance:"Tanzen",
+      bow:"Verbeugen",
+      moveTheCube: "Bewege den Würfel",
+      pressSource: "Position wählen",
+      pressDestination: "Position wählen",
+      clearAll:"Aufräumen",
+      connected: "Verbunden",
+      disconnected:"Getrennt",
+      pleaseWait:"Bitte warten, der Roboter bewegt sich"
+    }
+  };
 
   const refCarousel = useRef(null);
   const refCarousel2 = useRef(null);
@@ -94,11 +146,14 @@ function Slider() {
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
     setIndex2(selectedIndex);
+    setActiveTab(selectedIndex);
+   
   };
 
   const handleSelect2 = (selectedIndex2, e) => {
     setIndex2(selectedIndex2);
     setIndex(selectedIndex2);
+    setActiveTab(selectedIndex2);
   };
 
   function page(pageNumber) {
@@ -127,8 +182,8 @@ function Slider() {
   }
 
   function startGUI() {
-    refCarousel2.current.style.display = 'none';
-    refCarousel.current.style.display = 'flex';
+    refCarousel2.current.style.display = 'flex';
+   // refCarousel.current.style.display = 'flex';
   }
 
   function blabla() {
@@ -145,10 +200,28 @@ function Slider() {
     publishMessage(`eye_color,${color}`);
   };
 
-  return (<div id="main" ref={refMain} className='AppSmall'>
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabSelect = (tab) => {
+    setActiveTab(tab);
+    if (tab === 0) {
+      handleSelect(0);
+    } else if (tab === 1) {
+      handleSelect(1);
+    } else if (tab === 2) {
+      handleSelect(2);
+    }
+  }
+
+  const handleToggle = () => {
+    setLanguage(prevLanguage => (prevLanguage === 'german' ? 'english' : 'german'));
+  };
+
+
+  return (<div id="main" ref={refMain} className='AppLarge'>
 
     {/* Start Page start */}
-    <div id="carousel" className='carousel' ref={refCarousel} >
+    {/* <div id="carousel" className='carousel' ref={refCarousel} >
       <Carousel activeIndex={index} onSelect={handleSelect} interval={null} >
         <Carousel.Item onClick={() => page(0)} >
           <img
@@ -183,23 +256,52 @@ function Slider() {
         </Carousel.Item>
       </Carousel>
 
-    </div>
+    </div> */}
     {/* Start Page end */}
 
 
     {/* Main Page start */}
     <div id="carousel2" className='carousel' ref={refCarousel2} >
       <div className="tabbar">
-        <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(0)}>Common Task</Button>
+        {/* <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(0)}>Common Task</Button>
         <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(1)}>Personalisation</Button>
-        <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(2)}>Specific Task</Button>
+        <Button className="tabbarButton" variant="outline-secondary" onClick={() => handleSelect(2)}>Specific Task</Button> */}
+            <Nav variant="tabs" className="justify-content-center">
+      <Nav.Item>
+        <Nav.Link
+          eventKey={0}
+          onClick={() => handleTabSelect(0)}
+          active={activeTab === 0}
+        >
+          {texts[language].commonTask}
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          eventKey={1}
+          onClick={() => handleTabSelect(1)}
+          active={activeTab === 1}
+        >
+          {texts[language].personalisation}
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          eventKey={2}
+          onClick={() => handleTabSelect(2)}
+          active={activeTab === 2}
+        >
+          {texts[language].specificTask}
+        </Nav.Link>
+      </Nav.Item>
+    </Nav>
       </div>
       <Carousel  activeIndex={index2} onSelect={handleSelect2} interval={null} >
         <Carousel.Item >
           <div className='page1'>
-            <div >
+            {/* <div >
               <Button className="backbutton" variant="outline-light" size="lg" onClick={() => back(0)} >Back</Button>
-            </div>
+            </div> */}
 
             <div className='CircularMenu'>
               <CircleMenu startAngle={-90} rotationAngle={360} itemSize={5} radius={8} className={""} onMenuToggle={blabla}
@@ -221,30 +323,30 @@ function Slider() {
               </CircleMenu>
             </div>
             <Carousel.Caption>
-              <h3>Common Task</h3>
+            {texts[language].commonTask}
             </Carousel.Caption>
-            <h1 className="RightTitle">Play Motion</h1>
-            <h1 className="LeftTitle">Look</h1>
+            <h1 className="RightTitle">{texts[language].playMotion}</h1>
+            <h1 className="LeftTitle">{texts[language].look}</h1>
             <div className="RightElement">
-              <Button variant="light" size="lg" onClick={() => publishMessage("motion,show_left")} >Show Left</Button>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,show_left")} >{texts[language].showLeft}</Button>
               <br></br>
               <br></br>
-              <Button variant="light" size="lg" onClick={() => publishMessage("motion,nod")} >Nod</Button>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,nod")} >{texts[language].nod}</Button>
               <br></br>
               <br></br>
-              <Button variant="light" size="lg" onClick={() => publishMessage("motion,bow")}>Bow</Button>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,bow")}>{texts[language].bow}</Button>
               <br></br>
               <br></br>
-              <Button variant="light" size="lg" onClick={() => publishMessage("motion,dance")} >Dance</Button>
+              <Button variant="light" size="lg" onClick={() => publishMessage("motion,dance")} >{texts[language].dance}</Button>
             </div>
           </div>
 
         </Carousel.Item>
         <Carousel.Item >
           <div className='page2'  >
-            <div >
+            {/* <div >
               <Button className="backbutton" variant="outline-light" size="lg" onClick={() => back(1)}  >Back</Button>
-            </div>
+            </div> */}
             <div>
               <div className=''>
 
@@ -278,8 +380,17 @@ function Slider() {
 
               </div>
             </div>
-            <h1 className="LeftTitle">Eye Color</h1>
-            <h1 className="RightTitle">Set Voice</h1>
+            <h1 className="LeftTitle"> {texts[language].eye_color}</h1>
+            <h1 className="RightTitle">{texts[language].voice}</h1>
+
+            <div  className="toggle-switch-container">
+              <Form.Check
+              type="switch"
+              id="toggle-switch"
+              label={language === 'german' ? 'DE' : 'EN'}
+              checked={language === 'german'}
+              onChange={handleToggle}/>
+             </div>
             <div className="RightElement">
               <Button variant="light" size="lg" onClick={() => publishMessage("voice")} >Voice 1</Button>
               <br></br>
@@ -295,18 +406,18 @@ function Slider() {
           </div>
 
           <Carousel.Caption>
-            <h3>Personalisation</h3>
+          {texts[language].personalisation}
           </Carousel.Caption>
         </Carousel.Item>
         <Carousel.Item >
           <div className='page3'  >
-            <div >
+            {/* <div >
               <Button className="backbutton" variant="outline-light" size="lg" onClick={() => back(2)}  >Back</Button>
-            </div>
+            </div> */}
           </div>
 
           <Carousel.Caption>
-            <h3>Specific Task</h3>
+          {texts[language].specificTask}
           </Carousel.Caption>
         </Carousel.Item>
       </Carousel>
@@ -317,4 +428,4 @@ function Slider() {
   </div>)
 }
 
-export default Slider;
+export default Ari;

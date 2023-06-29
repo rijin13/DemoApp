@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import Slider from './components/Slider';
+import Ari from './components/Ari';
 import React, { useState,useEffect } from 'react';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
   return (
     // <div id="main" className="App">
     <div  >
-      <Slider></Slider>
+      <Ari></Ari>
     </div>
   );
 }
