@@ -3,11 +3,11 @@
 The is a user interface for robot touchscreen for performing different tasks using ReactJS and ROS. 
 ## Scenario
 ![](Image/scenario.png)
-## Common tasks (Page 1)
+## Common tasks page 
 ![](Image/1.png)
-## Personalization (Page 2)
+## Personalization page 
 ![](Image/2.png)
-## Specific tasks (Page 3)
+## Specific tasks page
 ![](Image/3.png)
 
 
